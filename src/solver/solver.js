@@ -1,3 +1,11 @@
+import {
+    point, edge, puzzle, pointPool, edgePool,
+    NODE_TYPE, EDGE_TYPE, CELL_TYPE, CELL_COLOR,
+    ORIENTATION_TYPE, create2DArray, initPuzzle,
+    updateTetrisLayoutProperties, horEdgeExists, verEdgeExists,
+    isEntireTetrisGridOff, powerSet, getColorString
+} from './shared.js';
+
 // Check if a tetris layout is hollow by checking if all blocks are reachable
 // from the outside
 function isTetrisLayoutHollow(cell) {
@@ -383,6 +391,7 @@ function checkSuns(area) {
 
     var sunPresent = {};
     var count = {};
+    var value;
     for (var colorname in CELL_COLOR) {
         value = CELL_COLOR[colorname];
         sunPresent[value] = false;
@@ -710,7 +719,7 @@ function getEdgesByType(type) {
     return edges;
 }
 
-function findSolution(path, visited, required, edgeRequired, exitsRemaining, areas, segment) {
+export function findSolution(path, visited, required, edgeRequired, exitsRemaining, areas, segment) {
 
     if (!required) {
 

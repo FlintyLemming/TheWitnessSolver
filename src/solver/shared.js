@@ -1,5 +1,5 @@
 // Types
-var NODE_TYPE = {
+export const NODE_TYPE = {
     'NORMAL': 0,
     'START': 1,
     'REQUIRED': 2,
@@ -9,7 +9,7 @@ var NODE_TYPE = {
     'LAST': 3
 };
 
-var EDGE_TYPE = {
+export const EDGE_TYPE = {
     'NORMAL': 0,
     'REQUIRED': 1,
     'OBSTACLE': 2,
@@ -18,7 +18,7 @@ var EDGE_TYPE = {
     'LAST': 2
 };
 
-var CELL_TYPE = {
+export const CELL_TYPE = {
     'NONE': 0,
     'SQUARE': 1,
     'TETRIS': 2,
@@ -31,8 +31,8 @@ var CELL_TYPE = {
     'LAST': 6
 };
 
-var BACKGROUND_COLOR = '#BBBBBB';
-var CELL_COLOR = {
+export const BACKGROUND_COLOR = '#BBBBBB';
+export const CELL_COLOR = {
     'BLACK': 0,
     'WHITE': 1,
     'CYAN': 2,
@@ -46,7 +46,7 @@ var CELL_COLOR = {
     'LAST': 8
 };
 
-var CELL_COLOR_STRINGS = [
+export const CELL_COLOR_STRINGS = [
     'black',
     'white',
     'cyan',
@@ -58,34 +58,34 @@ var CELL_COLOR_STRINGS = [
     'orange'
 ];
 
-function getColorString(c) {
+export function getColorString(c) {
     return CELL_COLOR_STRINGS[c];
 }
 
 // Helpers
-var ORIENTATION_TYPE = {
+export const ORIENTATION_TYPE = {
     'HOR': 0, // Horizontal
     'VER': 1  // Vertical
 }
 
 // Puzzle definition
-var puzzle = {};
+export let puzzle = {};
 
 // Used for keeping track of visited points with a Set
 // This requires that a given X,Y point is always the exact same JS object
-var pointPool = [];
+export let pointPool = [];
 
-function point(x, y) {
+export function point(x, y) {
     if (!pointPool[x]) pointPool[x] = [];
     if (!pointPool[x][y]) pointPool[x][y] = {x: x, y: y};
 
     return pointPool[x][y];
 }
 
-var edgePool = [];
+export let edgePool = [];
 
 // x and y are the left top point of a edge. ori is orientation
-function edge(x, y, ori) {
+export function edge(x, y, ori) {
     ori = ori == ORIENTATION_TYPE.HOR ? 0 : 1;
     if (!edgePool[x]) edgePool[x] = [];
     if (!edgePool[x][y]) edgePool[x][y] = {x: x, y: y};
@@ -94,7 +94,7 @@ function edge(x, y, ori) {
     return edgePool[x][y][ori];
 }
 
-function create2DArray(w, h) {
+export function create2DArray(w, h) {
     var arr = [];
 
     for (var x = 0; x < w; x++) {
@@ -106,20 +106,16 @@ function create2DArray(w, h) {
 }
 
 // Set up default puzzle with all edges and no special nodes or cells
-function initPuzzle(puzzle, width, height) {
+export function initPuzzle(puzzle, width, height) {
     puzzle.width = width;
     puzzle.height = height;
 
     initNodes(puzzle);
     initCells(puzzle);
     initEdges(puzzle);
-
-    // Update UI
-    $('option[value="' + width + ',' + height + '"]').prop('selected', true);
-    calculateMetrics();
 }
 
-function initNodes(puzzle) {
+export function initNodes(puzzle) {
     puzzle.nodes = create2DArray(puzzle.width, puzzle.height);
 
     for (var x = 0; x < puzzle.width; x++) {
@@ -129,7 +125,7 @@ function initNodes(puzzle) {
     }
 }
 
-function initEdges(puzzle) {
+export function initEdges(puzzle) {
     puzzle.horEdges = create2DArray(puzzle.width - 1, puzzle.height);
 
     for (var x = 0; x < puzzle.width - 1; x++) {
@@ -147,7 +143,7 @@ function initEdges(puzzle) {
     }
 }
 
-function initCells(puzzle) {
+export function initCells(puzzle) {
     puzzle.cells = create2DArray(puzzle.width - 1, puzzle.height - 1);
 
     for (var x = 0; x < puzzle.width - 1; x++) {
@@ -159,7 +155,7 @@ function initCells(puzzle) {
     }
 }
 
-function initTetrisLayout(puzzle, x, y) {
+export function initTetrisLayout(puzzle, x, y) {
     puzzle.cells[x][y].tetris = create2DArray(4, 4);
 
     for (var xx = 0; xx < 4; xx++) {
@@ -172,7 +168,7 @@ function initTetrisLayout(puzzle, x, y) {
 }
 
 // Recalculate the area and top-left anchor of the tetris layout in cell (x, y)
-function updateTetrisLayoutProperties(x, y) {
+export function updateTetrisLayoutProperties(x, y) {
     puzzle.cells[x][y].tetrisArea = 0;
     puzzle.cells[x][y].tetrisBounds = [Number.MAX_VALUE, Number.MAX_VALUE, 0, 0];
 
@@ -191,17 +187,17 @@ function updateTetrisLayoutProperties(x, y) {
     }
 }
 
-function horEdgeExists(x, y) {
+export function horEdgeExists(x, y) {
     if (x < 0 || y < 0 || x >= puzzle.width - 1 || y >= puzzle.height) return false;
     return puzzle.horEdges[x][y] != EDGE_TYPE.OBSTACLE;
 }
 
-function verEdgeExists(x, y) {
+export function verEdgeExists(x, y) {
     if (x < 0 || y < 0 || x >= puzzle.width || y >= puzzle.height - 1) return false;
     return puzzle.verEdges[x][y] != EDGE_TYPE.OBSTACLE;
 }
 
-function isEntireTetrisGridOff(x, y) {
+export function isEntireTetrisGridOff(x, y) {
     var tetris = puzzle.cells[x][y].tetris;
     for (var xx = 0; xx < 4; xx ++) {
         for (var yy = 0; yy < 4; yy ++) {
@@ -213,7 +209,7 @@ function isEntireTetrisGridOff(x, y) {
     return true;
 }
 
-function powerSet(list) {
+export function powerSet(list) {
     var set = [],
         listSize = list.length,
         combinationsCount = (1 << listSize),
@@ -229,4 +225,14 @@ function powerSet(list) {
         set.push(combination);
     }
     return set;
+}
+
+// Reset coordinate memo pools. The point/edge pools memoize objects by coords
+// so identity-based Set membership stays stable *within* a solve; clearing them
+// between solves prevents any residue across runs. The puzzle fields themselves
+// are populated by the caller (initPuzzle or the bridge) right before solving,
+// so they are intentionally left untouched here.
+export function resetPools() {
+    pointPool.length = 0;
+    edgePool.length = 0;
 }
