@@ -1,0 +1,20 @@
+:root {
+  --color-bg: #0a0a0a;
+  --color-sidebar: #141414;
+  --color-panel: #00E94F;
+  --color-path: #B1F514;
+  --color-edge-dark: #026223;
+  --color-node-dark: #026223;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: #fff;
+  font-family: 'Roboto', system-ui, -apple-system, sans-serif;
+  user-select: none;
+}
+
+#root { min-height: 100vh; }
