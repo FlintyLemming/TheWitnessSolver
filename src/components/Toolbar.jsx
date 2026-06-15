@@ -31,7 +31,7 @@ export default function Toolbar({
       <div className="toolbar-group">
         <button className="btn" onClick={onUndo} disabled={!canUndo} title="Undo (Ctrl/Cmd+Z)">↶</button>
         <button className="btn" onClick={onRedo} disabled={!canRedo} title="Redo (Ctrl/Cmd+Shift+Z)">↷</button>
-        <button className="btn btn-danger" onClick={onClear} title="Clear solution">✕ Clear</button>
+        <button className="btn btn-danger" onClick={onClear} title="Clear puzzle">✕ Clear</button>
       </div>
 
       <div className="toolbar-group">

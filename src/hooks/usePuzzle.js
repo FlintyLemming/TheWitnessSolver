@@ -1,4 +1,5 @@
 import { UNDO_STACK_LIMIT } from '../lib/constants.js';
+import { createBlankPuzzle } from '../lib/puzzleFactory.js';
 
 const clone = (obj) => JSON.parse(JSON.stringify(obj));
 
@@ -43,7 +44,8 @@ export function puzzleReducer(state, action) {
 
     case 'CLEAR': {
       const undo = pushCapped(state.undo, snapshot(state));
-      return { ...state, undo, redo: [], solution: makeSolution() };
+      const puzzle = createBlankPuzzle(state.puzzle.width, state.puzzle.height);
+      return { ...state, puzzle, undo, redo: [], solution: makeSolution() };
     }
 
     case 'RESIZE': {

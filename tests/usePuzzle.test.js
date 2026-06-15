@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { puzzleReducer, makeSolution } from '../src/hooks/usePuzzle.js';
 import { createBlankPuzzle } from '../src/lib/puzzleFactory.js';
-import { NODE_TYPE } from '../src/solver/shared.js';
+import { NODE_TYPE, EDGE_TYPE } from '../src/solver/shared.js';
 
 function init() {
   return puzzleReducer(undefined, { type: 'INIT', puzzle: createBlankPuzzle(3, 3) });
@@ -72,6 +72,38 @@ describe('puzzleReducer', () => {
     expect(s.solution.path).toBeNull();
     s = puzzleReducer(s, { type: 'UNDO' });
     expect(s.solution.viewing).toBe(true);
+  });
+
+  it('CLEAR wipes puzzle contents but preserves size (blank puzzle)', () => {
+    // Build a 3x3 puzzle with some content, then CLEAR.
+    let s = init(); // 3x3 blank
+    s = puzzleReducer(s, {
+      type: 'EDIT',
+      next: (p) => {
+        const q = JSON.parse(JSON.stringify(p));
+        q.nodes[0][0].type = NODE_TYPE.START;
+        q.nodes[2][2].type = NODE_TYPE.EXIT;
+        q.horEdges[0][0] = EDGE_TYPE.OBSTACLE;
+        q.cells[0][0].type = 1; // SQUARE
+        return q;
+      },
+    });
+    expect(s.puzzle.nodes[0][0].type).toBe(NODE_TYPE.START);
+
+    s = puzzleReducer(s, { type: 'CLEAR' });
+    // Size preserved
+    expect(s.puzzle.width).toBe(3);
+    expect(s.puzzle.height).toBe(3);
+    // Contents all reset to defaults
+    expect(s.puzzle.nodes[0][0].type).toBe(NODE_TYPE.NORMAL);
+    expect(s.puzzle.nodes[2][2].type).toBe(NODE_TYPE.NORMAL);
+    expect(s.puzzle.horEdges[0][0]).toBe(EDGE_TYPE.NORMAL);
+    expect(s.puzzle.cells[0][0].type).toBe(0); // NONE
+    expect(s.solution.viewing).toBe(false);
+    expect(s.undo).toHaveLength(2); // EDIT snapshot + CLEAR snapshot
+    // Undoable: restores the populated state
+    s = puzzleReducer(s, { type: 'UNDO' });
+    expect(s.puzzle.nodes[0][0].type).toBe(NODE_TYPE.START);
   });
 
   it('RESIZE pushes snapshot and replaces puzzle', () => {
