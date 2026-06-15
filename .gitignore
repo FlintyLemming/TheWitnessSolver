@@ -3,3 +3,8 @@ dist/
 .DS_Store
 *.log
 .vite/
+
+# Local tooling / session artifacts (not part of the app)
+.superpowers/
+session_*.zip
+.vercel/
